@@ -31,21 +31,24 @@ type User struct {
 var states []State
 
 // enable CORS
-func enableCors(w *http.ResponseWriter) {
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
 // Get all States
 func getStates(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	states[0].Value = strconv.Itoa(random(10, 200)) + "GB"
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(states)
 }
 
 //authenticate User
 func authenticate(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setupResponse(&w, r)
+	if (*r).Method == "OPTIONS" {
+		return
+	}
 	var user User
 	_ = json.NewDecoder(r.Body).Decode(&user)
 	if user.Name == "john" && user.Password == "password" {

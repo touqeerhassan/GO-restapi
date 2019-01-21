@@ -1,0 +1,1 @@
+Simply run already build go binary file by command ./restapi in relative folder
